@@ -290,8 +290,9 @@ paths:
             example: 2
       responses:
         200:
+          description: Success
           content:
-            appclication/json:
+            application/json:
               schema:
                 type: array
                 items:
