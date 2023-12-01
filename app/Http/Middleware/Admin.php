@@ -23,7 +23,7 @@ class Admin
 
         return response()->json([
             'message' => 'You are not an admin'
-        ], 400);
+        ], 403);
 
     }
 }

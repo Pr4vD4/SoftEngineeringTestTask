@@ -25,7 +25,7 @@ class RedirectIfAuthenticated
             } else if (Auth::guard($guard)->check() && $request->expectsJson()) {
                 return response()->json([
                     'message' => 'You already have been authorized'
-                ], 400);
+                ], 403);
             }
         }
 
