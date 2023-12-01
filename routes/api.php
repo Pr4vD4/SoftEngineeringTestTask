@@ -26,9 +26,9 @@ Route::middleware('forceJson')->group(function () {
     Route::group(['middleware' => ['auth:api']], function () {
 
         Route::get('/profile', [\App\Http\Controllers\UserController::class, 'profile']);
+        Route::get('/profile/notes', [\App\Http\Controllers\NoteController::class, 'users_notes']);
 
         Route::post('/notes', [\App\Http\Controllers\NoteController::class, 'store']);
-        Route::get('/notes/display', [\App\Http\Controllers\NoteController::class, 'users_notes']);
 
     });
 
@@ -38,7 +38,7 @@ Route::middleware('forceJson')->group(function () {
         Route::apiResource('users', \App\Http\Controllers\UserController::class);
 
         Route::get('/notes', [\App\Http\Controllers\NoteController::class, 'index']);
-        Route::get('/user/notes/{user}', [\App\Http\Controllers\NoteController::class, 'user_note']);
+        Route::get('/user/{user}/notes', [\App\Http\Controllers\NoteController::class, 'user_note']);
 
         Route::get('/test', function () {
             return response()->json([
