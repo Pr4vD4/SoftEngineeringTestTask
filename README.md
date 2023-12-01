@@ -44,11 +44,18 @@ MAIL_FROM_NAME="${APP_NAME}"
 ````
 
 Migrate tables and fill them
-````
+````cmd
 php artisan migrate
 php artisan db:seed
 ````
 
-password for admin by default: *12345678*
+Start listen queues
+```cmd
+php artisan queue:listen
+```
 
+password for admin(email for auth: *admin@seeder.ru*) by default: *12345678*
 
+All requests in openAPI.yaml
+
+To auth use the token from auth response
