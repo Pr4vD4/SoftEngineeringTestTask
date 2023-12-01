@@ -1,0 +1,258 @@
+openapi: 3.0.3
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+servers:
+  - url: 'http://softengineeringtesttask/api'
+tags:
+  - name: Auth
+  - name: Role
+
+paths:
+  /auth:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+                - password
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: 'user@mail.ru'
+                password:
+                  type: string
+                  example: '12345678'
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiYWJjMzMzYzRmMGQ5M2Y1NDZhNjg0YTVmY2U5YzRiZGY2ZWY3YmRmNTBlZGM0MmFhZmMwZDc3ODkzYzE5MmI2MDE0MWZiZjhiYjE0MTljY2UiLCJpYXQiOjE3MDE0MDIzMjguMjM2NzM2LCJuYmYiOjE3MDE0MDIzMjguMjM2NzM3LCJleHAiOjE3MzMwMjQ3MjguMjMzNDEsInN1YiI6IjEiLCJzY29wZXMiOltdfQ.kDnoKKxrodp6DG0s_snwwOep8BsaXIr0SC9CpINpKMu3tkmNKBkVI6Ak4_LzVqdI5yeJMxkuWfTTHTXPOGxmDkPQaFppQbX-2YYPDyP0pfKmKMVSxnGQA6BiSylUwNIPVVqDLzetsOdGQPJCJikokkzD7i6731U8iLTyva1kECdvQfDjzAj116pXYMIuyqJjXrnldwKG43AxpY-_zHvr1wwLIbGSDbg-mhsQSJHI4-EIZmnFiU5U2cl0j9NijVps1gsZWnINBTJsVdo5J-gCq0wvdJex1zuB1wJOT3sJjYEyi2tdQVT3Sk9B0qwG1MXvDpb59KhQUXdenEOtDIrsWcxkiK6wxV4kWtxA2lKfQUJz5hWjEy5l1bvOJXRvp2nAGRd-0Sdz4pc-SzcZT_nh2vZnE-msBcn4CbZofIG2qiNZ-HWWUtHm1aRRclDKT9Dp3RXzS8ULAaUZGr_WJy94FQSwmN_Ng614Y-C5m9BUoTWvnWW161Y9y8s-Qxjq5z4z6iSWi7WTb0ITC32DfA2HYOVFfsh2SGOnA_yt7SsIBeBtMpHMIbpmwpj9UhoQqb-BqyWbxumbkz8Dkt6ibfnA7nfxmSn7IxTAu0nug2i3eplUStACD-vqw13vNxO7BTtiFK1YfzMFZZDlImlVyaGl6kh0csZCTzuowOyZiM1iWHY'
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/responses/400'
+        '403':
+          description: You are already auth
+
+  /register:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+                - email
+                - password
+                - password_confirmation
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'user'
+                email:
+                  type: string
+                  example: 'user@mail.ru'
+                password:
+                  type: string
+                  example: '12345678'
+                password_confirmation:
+                  type: string
+                  example: '12345678'
+      responses:
+        '200':
+          description: notes are empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/responses/400'
+        '403':
+          description: You are already auth
+
+  /roles:
+    get:
+      summary: Only admin can access
+      tags:
+        - Role
+      responses:
+        '200':
+          description: All roles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+                example:
+                  - id: 1
+                    name: 'user'
+                  - id: 2
+                    name: 'admin'
+        '401':
+          $ref: '#/responses/401'
+        '403':
+          $ref: '#/responses/403'
+    post:
+      summary: Only admin can access
+      tags:
+        - Role
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'editor'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '401':
+          $ref: '#/responses/401'
+        '403':
+          $ref: '#/responses/403'
+  /roles/{role}:
+    get:
+      summary: Only admin can access
+      tags:
+        - Role
+      parameters:
+        - name: roleId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '401':
+          $ref: '#/responses/401'
+        '403':
+          $ref: '#/responses/403'
+
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    User:
+      required:
+        - name
+        - email
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 'user'
+        email:
+          type: string
+          example: 'user@mail.ru'
+        role:
+          $ref: '#/components/schemas/Role'
+        notes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
+          example:
+            - id: 1
+              title: 'Title'
+              note_body: 'Note'
+            - id: 2
+              title: 'New Note'
+              note_body: 'New note body'
+    Role:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 'user'
+    Note:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: 'Note Title'
+        note_body:
+          type: string
+          example: 'Note text'
+
+security:
+  - bearerAuth: []
+responses:
+  '401':
+    description: Unauthenticated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            'message':
+              type: string
+              example: 'Unauthenticated'
+  '403':
+    description: Forbidden
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            'message':
+              type: string
+              example: 'Forbidden'
+  '400':
+    description: Validation failed
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              example: 'The email field is required.'
+            password:
+              type: string
+              example: 'The password field is required.'
+
+
