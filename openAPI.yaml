@@ -9,6 +9,7 @@ tags:
   - name: Auth
   - name: Role
   - name: User
+  - name: Note
 paths:
   /auth:
     post:
@@ -217,7 +218,31 @@ paths:
         403:
           $ref: '#/responses/403'
   /users/{userId}:
+    get:
+      summary: Only admin can access
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/responses/401'
+        403:
+          $ref: '#/responses/403'
+
     patch:
+      summary: Only admin can access
       tags:
         - User
       parameters:
@@ -250,6 +275,100 @@ paths:
           $ref: '#/responses/401'
         403:
           $ref: '#/responses/403'
+
+  /user/{userId}/notes:
+    get:
+      tags:
+        - User
+      summary: Only admin can access
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        200:
+          content:
+            appclication/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Note'
+
+  /profile:
+    get:
+      tags:
+        - User
+      description: Get auth user info
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/responses/401'
+  /profile/notes:
+    get:
+      tags:
+        - User
+      description: Users's notes
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Note'
+        401:
+          $ref: '#/responses/401'
+
+  /notes:
+    get:
+      tags:
+        - Note
+      summary: Only admin can access
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Note'
+        401:
+          $ref: '#/responses/401'
+        403:
+          $ref: '#/responses/403'
+    post:
+      tags:
+        - Note
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: 'Note title'
+                note_body:
+                  type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        401:
+          $ref: '#/responses/401'
 
 components:
   securitySchemes:
