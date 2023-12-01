@@ -8,7 +8,7 @@ servers:
 tags:
   - name: Auth
   - name: Role
-
+  - name: User
 paths:
   /auth:
     post:
@@ -30,7 +30,7 @@ paths:
                   type: string
                   example: '12345678'
       responses:
-        '200':
+        200:
           description: success
           content:
             application/json:
@@ -42,9 +42,9 @@ paths:
                     example: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiYWJjMzMzYzRmMGQ5M2Y1NDZhNjg0YTVmY2U5YzRiZGY2ZWY3YmRmNTBlZGM0MmFhZmMwZDc3ODkzYzE5MmI2MDE0MWZiZjhiYjE0MTljY2UiLCJpYXQiOjE3MDE0MDIzMjguMjM2NzM2LCJuYmYiOjE3MDE0MDIzMjguMjM2NzM3LCJleHAiOjE3MzMwMjQ3MjguMjMzNDEsInN1YiI6IjEiLCJzY29wZXMiOltdfQ.kDnoKKxrodp6DG0s_snwwOep8BsaXIr0SC9CpINpKMu3tkmNKBkVI6Ak4_LzVqdI5yeJMxkuWfTTHTXPOGxmDkPQaFppQbX-2YYPDyP0pfKmKMVSxnGQA6BiSylUwNIPVVqDLzetsOdGQPJCJikokkzD7i6731U8iLTyva1kECdvQfDjzAj116pXYMIuyqJjXrnldwKG43AxpY-_zHvr1wwLIbGSDbg-mhsQSJHI4-EIZmnFiU5U2cl0j9NijVps1gsZWnINBTJsVdo5J-gCq0wvdJex1zuB1wJOT3sJjYEyi2tdQVT3Sk9B0qwG1MXvDpb59KhQUXdenEOtDIrsWcxkiK6wxV4kWtxA2lKfQUJz5hWjEy5l1bvOJXRvp2nAGRd-0Sdz4pc-SzcZT_nh2vZnE-msBcn4CbZofIG2qiNZ-HWWUtHm1aRRclDKT9Dp3RXzS8ULAaUZGr_WJy94FQSwmN_Ng614Y-C5m9BUoTWvnWW161Y9y8s-Qxjq5z4z6iSWi7WTb0ITC32DfA2HYOVFfsh2SGOnA_yt7SsIBeBtMpHMIbpmwpj9UhoQqb-BqyWbxumbkz8Dkt6ibfnA7nfxmSn7IxTAu0nug2i3eplUStACD-vqw13vNxO7BTtiFK1YfzMFZZDlImlVyaGl6kh0csZCTzuowOyZiM1iWHY'
                   user:
                     $ref: '#/components/schemas/User'
-        '400':
+        400:
           $ref: '#/responses/400'
-        '403':
+        403:
           description: You are already auth
 
   /register:
@@ -75,15 +75,15 @@ paths:
                   type: string
                   example: '12345678'
       responses:
-        '200':
+        200:
           description: notes are empty
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-        '400':
+        400:
           $ref: '#/responses/400'
-        '403':
+        403:
           description: You are already auth
 
   /roles:
@@ -105,9 +105,9 @@ paths:
                     name: 'user'
                   - id: 2
                     name: 'admin'
-        '401':
+        401:
           $ref: '#/responses/401'
-        '403':
+        403:
           $ref: '#/responses/403'
     post:
       summary: Only admin can access
@@ -131,9 +131,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Role'
-        '401':
+        401:
           $ref: '#/responses/401'
-        '403':
+        403:
           $ref: '#/responses/403'
   /roles/{roleId}:
     get:
@@ -147,18 +147,109 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        200:
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Role'
-        '401':
+        401:
           $ref: '#/responses/401'
-        '403':
+        403:
           $ref: '#/responses/403'
-
-
+  /users:
+    get:
+      summary: Only admin can access
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/responses/401'
+        403:
+          $ref: '#/responses/403'
+    post:
+      summary: Only admin can access
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+                - email
+                - password
+                - password_confirmation
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'user'
+                email:
+                  type: string
+                  example: 'user@mail.ru'
+                password:
+                  type: string
+                  example: '12345678'
+                password_confirmation:
+                  type: string
+                  example: '12345678'
+                role_id:
+                  type: integer
+                  example: 1
+      responses:
+        200:
+          description: Success (notes are empty)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/responses/401'
+        403:
+          $ref: '#/responses/403'
+  /users/{userId}:
+    patch:
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'another name'
+                email:
+                  type: string
+                  example: 'anotheremail@mail.ru'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/responses/401'
+        403:
+          $ref: '#/responses/403'
 
 components:
   securitySchemes:
@@ -219,7 +310,7 @@ components:
           example: 'Note text'
 
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]
 responses:
   '401':
     description: Unauthenticated
