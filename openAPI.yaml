@@ -135,7 +135,7 @@ paths:
           $ref: '#/responses/401'
         '403':
           $ref: '#/responses/403'
-  /roles/{role}:
+  /roles/{roleId}:
     get:
       summary: Only admin can access
       tags:
